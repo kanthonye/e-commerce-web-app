@@ -15,7 +15,7 @@ function Home( params )
         <li><Link to="/">Swimwear</Link></li> |
         <li><Link to="/">Urben</Link></li> ]
       </ul> */}
-      <ProductList />
+      <ProductList clearOverlays={params.clearOverlays} />
     </div>
   );
 }

@@ -1,17 +1,4 @@
-import {PlusButn, MinusButn, XButn} from './Buttons'
-
-
-const Spinner = ( params ) =>
-{
-  return (
-    <div className="row-align center gap-15">
-        <MinusButn onClick={() => params.decrement()} />
-        {params.count}
-        <PlusButn onClick={() => params.increment()} />
-    </div>
-  );
-}
-
+import {Spinner, XButn} from './Buttons'
 
 const BagItem = ( params ) =>
 {
@@ -33,13 +20,11 @@ const BagItem = ( params ) =>
   
   const onDecrement = () =>
   {
-    console.log("decrement quantity");
     params.decrementItem(id);
   }
 
   const onIncrement = () =>
   {
-    console.log("increment quantity");
     params.incrementItem(id);
   }
 

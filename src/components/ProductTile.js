@@ -4,9 +4,10 @@ const ProductTile = ( params ) =>
 {
     const item = params.item;
     const logo = require("../../public/product-images/" + item.images[0]); 
+
     return (
         <div className="item-display">
-            <Link to="/product" state={item}>
+            <Link to="/product" state={item} onClick={() => params.clearOverlays()} >
                 <img width="100%" src={logo} alt="Logo" />
             </Link>
             <div className="fs-16" style={{color:'#555'}}>{ item.name }</div>

@@ -8,144 +8,232 @@ import Home from './components/Home'
 import Menu from './components/Menu'
 import ProductPage from './components/ProductPage'
 import { products } from './components/data';
+import CheckoutPage from './components/CheckoutPage';
 
 function App() 
 {
-  const [show_menu, setMenuVisibility] = useState(false);
-  const [show_cart, setCartVisibility] = useState(false);
-  const [subtotal, setSubTotal] = useState(0);
-  const [shipping, setShipping] = useState(0);
-  const [items, setItems] = useState([
-    {count: 1, item: products[0]}, 
-    {count: 2, item: products[1]}, 
-    {count: 1, item: products[4]}, 
-  ]);
+    const [ show_menu, setMenuVisibility ] = useState(false);
+    const [ show_cart, setCartVisibility ] = useState(false);
+    const [ subtotal, setSubTotal ] = useState(0);
+    const [ shipping, setShipping ] = useState(0);
+    const [ bag, setBag ] = useState([]);
+    const [ total_item, setTotalItem ] = useState(1);
 
-  useEffect(() => {
-    // Update the document title using the browser API
-    let total = 0;
-    items.map((item, key) => {
-        total += (parseFloat(item.item.price) - parseFloat(item.item.discount)) * parseInt(item.count);
-    });
-    setSubTotal( total.toFixed(2) );
-  });
-
-
-  const toggleMenu = () =>
-  {
-    if(show_menu) setMenuVisibility(false);
-    else setMenuVisibility(true);
-    setCartVisibility(false);
-  }
-
-  const toggleCart = () =>
-  {
-    if(show_cart) setCartVisibility(false);
-    else setCartVisibility(true);
-    setMenuVisibility(false);
-  }
-
-  const decrementQuantity = ( id ) =>
-  {
-    var i = null;
-    
-    let array = items.map(item => {
-      if (item.item.id == id) 
-      {
-        const count = item.count - 1;
-        if( count - 1 < 0 )
+    useEffect
+    (
+        () => 
         {
-          i = item.item.id;
+            /* calculate the subtotal */
+            let cost = 0;
+            bag.forEach
+            (
+                (item, key) => 
+                {
+                    cost += (parseFloat(item.item.price) - parseFloat(item.item.discount)) * parseInt(item.count);
+                }
+            );
+            setSubTotal( cost );
+
+            /* calculate the sum of all the items in the bag */
+            let quantity = 0;
+            bag.forEach
+            (
+                item => quantity += parseInt(item.count)
+            );
+            setTotalItem( quantity );
         }
-        return {...item, count: count,};
-      }
-      else 
-      {
-        return item;
-      }
-    });
-    
-    if( i !== null )
+    );
+
+
+    const toggleMenu = () =>
     {
-      array = array.filter( item => item.item.id !== i );
-      console.log(i);
+        if(show_menu) setMenuVisibility(false);
+        else setMenuVisibility(true);
+        setCartVisibility(false);
     }
 
-    setItems( array );
-  }
+    const toggleCart = () =>
+    {
+        if(show_cart) setCartVisibility(false);
+        else setCartVisibility(true);
+        setMenuVisibility(false);
+    }
 
-  const incrementQuantity = ( id ) =>
-  {
-    console.log("increment quantity");
-    const array = items.map(item => {
-      if (item.item.id == id) 
-      {
-        return {
-          ...item,
-          count: item.count + 1,
-        };
-      }
-      else 
-      {
-        return item;
-      }
-    });
-    console.log(array);
-    setItems( array );
-  }
+    const clearOverlays = () =>
+    {
+        setCartVisibility(false);
+        setMenuVisibility(false);
+    }
 
-  const addItem = ( id ) =>
-  {
-  }
-
-  const removeItem = ( id ) =>
-  {
-    let filtered_tiems = items.filter
-    (
-      item => item.item.id !== id
-    );
-    setItems( filtered_tiems );
-  }
-
-  const shoppingBag = {
-    subtotal : subtotal,
-    items : items,
-  };
-
-  return (
-    <div>
-      <Menu show={show_menu}/>
-      <Cart 
-        show={show_cart} 
-        bag={shoppingBag} 
-        subtotal={subtotal} 
-        shipping={shipping}
-        removeItem={removeItem}
-        incrementItem={incrementQuantity}
-        decrementItem={decrementQuantity}
-      />
-
-      <BrowserRouter>
-        <Routes>
-          <Route 
-            path="/" 
-            element=
+    const decrementQuantity = ( id ) =>
+    {
+        var i = null;
+        
+        let array = bag.map(item => {
+        if (item.item.id == id) 
+        {
+            const count = item.count - 1;
+            if( count - 1 < 0 )
             {
-              <Layout 
-                toggleMenu={toggleMenu} 
-                toggleCart={toggleCart} 
-                shoppingBag={shoppingBag} 
-              />
+                i = item.item.id;
             }
-          >
-            <Route index element={<Home />} />
-            <Route path="/product" element={<ProductPage />} />
-            <Route path="*" element={<NoPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
-  );
+            return {...item, count: count,};
+        }
+        else 
+        {
+            return item;
+        }
+        });
+        
+        if( i !== null )
+        {
+        array = array.filter( item => item.item.id !== i );
+        }
+
+        setBag( array );
+    }
+
+    const incrementQuantity = ( id ) =>
+    {
+        const array = bag.map
+        (
+            item => 
+            {
+                if (item.item.id == id) 
+                {
+                    return {
+                        ...item,
+                        count: item.count + 1,
+                    };
+                }
+                else 
+                {
+                    return item;
+                }
+            }
+        );
+        setBag( array );
+    }
+
+    const addItem = ( obj ) =>
+    {
+        if( obj.count >= 1 )
+        {
+            let itm = bag.find  /* check if item already exist in shopping bag */
+            (
+                item => 
+                {
+                    if( item.item.id === obj.item_id )
+                        return item;
+                }
+            );
+
+            if( itm != null ) /* if item already exist in bag increase its quantity */
+            {
+                const array = bag.map
+                (
+                    item => 
+                    {
+                        if (item.item.id == obj.item_id) 
+                        {
+                            return { ...item, count: item.count + parseInt(obj.count) };
+                        }
+                        else 
+                        {
+                            return item;
+                        }
+                    }
+                );
+                setBag( array );
+            }
+            else /* else add new item to the shopping bag */
+            {
+                itm = products.find
+                (
+                    item => {
+                        if( item.id === obj.item_id )
+                            return item;
+                    }
+                );
+                
+                if( itm !== null )
+                {
+                    setBag([...bag, { size: obj.size, count: obj.count, item: itm }]);
+                }
+            }
+        }
+    }
+
+    const removeItem = ( id ) =>
+    {
+        let filtered_tiems = bag.filter
+        (
+            item => item.item.id !== id
+        );
+        setBag( filtered_tiems );
+    }
+
+    return (
+        <div>
+            <Menu show={show_menu}/>
+            <Cart 
+                show_menu={show_menu} 
+                show={show_cart} 
+                bag={bag} 
+                subtotal={subtotal} 
+                shipping={shipping}
+                total_item={total_item}
+                removeItem={removeItem}
+                incrementItem={incrementQuantity}
+                decrementItem={decrementQuantity}
+            />
+
+            <BrowserRouter>
+                <Routes>
+                <Route 
+                    path="/" 
+                    element=
+                    {
+                        <Layout 
+                            toggleMenu={toggleMenu} 
+                            toggleCart={toggleCart} 
+                            clearOverlays={clearOverlays}
+                            total_item={total_item} 
+                            subtotal={subtotal} 
+                            bag={bag} 
+                    />
+                    }
+                >
+                    <Route 
+                        path="*" element={<NoPage />} 
+                    />
+
+                    <Route 
+                        index 
+                        element={<Home clearOverlays={clearOverlays} />} 
+                    />
+
+                    <Route 
+                        path="/product" 
+                        element={<ProductPage addToBag={addItem}/>} 
+                    />
+                    
+                    <Route 
+                        path="/checkout" 
+                        element={
+                            <CheckoutPage 
+                                bag={bag} 
+                                subtotal={subtotal} 
+                                shipping={shipping}
+                                total_item={total_item}
+                            />
+                        } 
+                    />
+                </Route>
+                </Routes>
+            </BrowserRouter>
+        </div>
+    );
 }
 
 export default App;

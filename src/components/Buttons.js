@@ -25,3 +25,14 @@ export const XButn = ( params ) =>
     </div>
   );
 }
+
+export const Spinner = ( params ) =>
+{
+  return (
+    <div className="row-align center gap-15">
+        <MinusButn onClick={() => params.decrement()} />
+        {params.count}
+        <PlusButn onClick={() => params.increment()} />
+    </div>
+  );
+}
