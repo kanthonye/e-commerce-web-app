@@ -66,6 +66,9 @@ function App()
         setMenuVisibility(false);
     }
 
+    /**
+     * function use to decrement an item quantity
+     */
     const decrementQuantity = ( id ) =>
     {
         var i = null;
@@ -94,6 +97,9 @@ function App()
         setBag( array );
     }
 
+    /**
+     * function use to increment an item quantity
+     */
     const incrementQuantity = ( id ) =>
     {
         const array = bag.map
@@ -116,6 +122,9 @@ function App()
         setBag( array );
     }
 
+    /**
+     * function use to add item to bag
+     */
     const addItem = ( obj ) =>
     {
         if( obj.count >= 1 )
@@ -165,6 +174,9 @@ function App()
         }
     }
 
+    /**
+     * function use to remove an item from bag
+     */
     const removeItem = ( id ) =>
     {
         let filtered_tiems = bag.filter
