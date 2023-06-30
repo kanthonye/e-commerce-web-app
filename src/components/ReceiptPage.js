@@ -1,5 +1,5 @@
 
-function CheckoutPage( params ) 
+function ReceiptPage( params ) 
 {
   return (
     <div className="page center row-align fc-gray">
@@ -8,4 +8,4 @@ function CheckoutPage( params )
   );
 }
 
-export default CheckoutPage;
+export default ReceiptPage;

@@ -9,6 +9,7 @@ import Menu from './components/Menu'
 import ProductPage from './components/ProductPage'
 import { products } from './components/data';
 import CheckoutPage from './components/CheckoutPage';
+import ReceiptPage from './components/ReceiptPage';
 
 function App() 
 {
@@ -216,6 +217,11 @@ function App()
                     <Route 
                         path="/product" 
                         element={<ProductPage addToBag={addItem}/>} 
+                    />
+                    
+                    <Route 
+                        path="/receipt" 
+                        element={<ReceiptPage addToBag={addItem}/>} 
                     />
                     
                     <Route 
